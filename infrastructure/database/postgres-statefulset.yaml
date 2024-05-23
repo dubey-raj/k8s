@@ -2,6 +2,7 @@ apiVersion: apps/v1
 kind: StatefulSet
 metadata:
   name: postgres
+  namespace: nagp
 spec:
   serviceName: "postgres"
   replicas: 1
@@ -20,18 +21,36 @@ spec:
         - containerPort: 5432
           name: postgres
         env:
-        - name: POSTGRES_USER
-          value: postgres
-        - name: POSTGRES_PASSWORD
-          value: examplepassword
         - name: PGDATA
-          value: /var/lib/postgresql/data/pgdata
+          valueFrom:
+            configMapKeyRef:
+              name: postgres-config
+              key: PGDATA
         - name: POSTGRES_INITDB_ARGS
-          value: "--data-checksums"
+          valueFrom:
+            configMapKeyRef:
+              name: postgres-config
+              key: POSTGRES_INITDB_ARGS
         - name: POSTGRES_DB
-          value: mydatabase
+          valueFrom:
+            configMapKeyRef:
+              name: postgres-config
+              key: POSTGRES_DB
+        - name: POSTGRES_USER
+          valueFrom:
+            configMapKeyRef:
+              name: postgres-config
+              key: POSTGRES_USER 
+        - name: POSTGRES_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: postgres-secret
+              key: POSTGRES_PASSWORD
         - name: POSTGRES_CONFIG_FILE
-          value: /etc/postgresql/postgresql.conf
+          valueFrom:
+            configMapKeyRef:
+              name: postgres-config
+              key: POSTGRES_CONFIG_FILE
         volumeMounts:
         - name: pgdata
           mountPath: /var/lib/postgresql/data
