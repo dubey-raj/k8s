@@ -1,0 +1,50 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: user-manager-api
+  namespace: nagp
+spec:
+  replicas: 3
+  strategy:
+    type: RollingUpdate
+    rollingupdate:
+      maxSurge: 1       # Number of pods that can be created above the desired number of pods
+      maxUnavailable: 1 # Number of pods that can be unavailable during the update
+  selector:
+    matchLabels:
+      app: user-manager-api
+  template:
+    metadata:
+      labels:
+        app: user-manager-api
+    spec:
+      containers:
+      - name: user-manager-api
+        image: dubeyraj/usermanager
+        ports:
+        - containerPort: 80
+        resources:
+          limits:
+            cpu: "1"
+            memory: 512Mi
+          requests:
+            cpu: "0.2"
+            memory: 256Mi
+        env:
+        - name: Host
+          value: "postgres-headless.nagp.svc.cluster.local"
+        - name: Database
+          valueFrom:
+            configMapKeyRef:
+              name: postgres-config
+              key: POSTGRES_DB
+        - name: DB_UserName
+          valueFrom:
+            configMapKeyRef:
+              name: postgres-config
+              key: POSTGRES_USER
+        - name: DB_Password
+          valueFrom:
+            secretKeyRef:
+              name: postgres-secret
+              key: POSTGRES_PASSWORD
