@@ -17,13 +17,5 @@ namespace UserManagement.DAL
         }
 
         public DbSet<User> Users { get; set; }
-
-        //protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        //{
-        //    if (!optionsBuilder.IsConfigured)
-        //    {
-        //        optionsBuilder.UseNpgsql("Host=localhost;Database=users;Username=postgres;Password=P@!ssw0rd3#");
-        //    }
-        //}
     }
 }

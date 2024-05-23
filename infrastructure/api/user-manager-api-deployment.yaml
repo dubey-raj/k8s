@@ -7,7 +7,7 @@ spec:
   replicas: 3
   strategy:
     type: RollingUpdate
-    rollingupdate:
+    rollingUpdate:
       maxSurge: 1       # Number of pods that can be created above the desired number of pods
       maxUnavailable: 1 # Number of pods that can be unavailable during the update
   selector:
