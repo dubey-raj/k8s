@@ -3,6 +3,8 @@ kind: HorizontalPodAutoscaler
 metadata:
   namespace: nagp
   name: user-manager-api-hpa
+  labels:
+    app: user-manager-api
 spec:
   scaleTargetRef:
     apiVersion: apps/v1

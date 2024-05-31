@@ -3,6 +3,8 @@ kind: ConfigMap
 metadata:
   name: postgres-config
   namespace: nagp
+  labels:
+    app: postgres
 data:
   postgres.conf: |
     listen_addresses = '*'

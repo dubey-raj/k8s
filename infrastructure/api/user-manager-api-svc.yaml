@@ -3,6 +3,8 @@ kind: Service
 metadata:
   name: user-manager-api-service
   namespace: nagp
+  labels:
+    app: user-manager-api
 spec:
   type: LoadBalancer
   selector:
