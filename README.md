@@ -5,7 +5,7 @@ Create and deploy Kubernetes workloads using different cloud providers
 [Docker hub](https://hub.docker.com/repository/docker/dubeyraj/usermanager/general)<br>
 [Service API](http://127.0.0.1/swagger)
 
-...bash
+```console
 infrastructure
 │   namespace.yaml
 │
@@ -19,4 +19,4 @@ infrastructure
         postgres-headless-svc.yaml
         postgres-secret.yaml
         postgres-statefulset.yaml
-...
+```
