@@ -1,12 +1,11 @@
 # k8s
 Create and deploy Kubernetes workloads using different cloud providers
-<br>
-[Code Repository](https://github.com/dubey-raj/k8s/tree/master/infrastructure)<br>
-[Docker hub](https://hub.docker.com/repository/docker/dubeyraj/usermanager/general)<br>
-[Service API](http://127.0.0.1/swagger)
 
+Source code is arranged as below file structure.<br>
 ```console
-infrastructure
+usermanagement(dotnet web api)
+│   Dockerfile
+infrastructure(contains yaml files for kubernetes)
 │   namespace.yaml
 │
 ├───api
@@ -20,3 +19,7 @@ infrastructure
         postgres-secret.yaml
         postgres-statefulset.yaml
 ```
+
+<br>
+[Docker hub URL](https://hub.docker.com/repository/docker/dubeyraj/usermanager/general)<br>
+[API URL](http://34.139.140.232/swagger)
