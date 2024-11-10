@@ -39,4 +39,3 @@ jobs:
       with:
           push: true
           tags: dubeyraj/usermanager
-          context: usermanager
