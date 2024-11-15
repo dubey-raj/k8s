@@ -1,0 +1,48 @@
+1. Overall setup of the system.
+2. Show all objects deployed and running.
+3. Everything is correctly deployed for database.
+4. Everything is correctly deployed for API service.
+5. Run API and retrieve records from db.
+6. Show rolling update for API service pods.
+7. Show that deleting db pods doesn’t delete data from db.
+8. Show Horizontal Pod Autoscaler in action.
+-----------------------------------------------------------------
+
+1. Show project structure
+
+2. kubectl get all -n nagp
+   kubectl get configmap -n nagp
+   kubectl get secret -n nagp
+   
+3. kubectl get pvc -n nagp
+   kubectl get all -l app=postgres -n nagp
+   
+4. kubectl get all -l app=user-manager-api -n nagp
+
+5. http://34.139.140.232/swagger/index.html
+
+6. kubectl set image deployment/user-manager-api user-manager-api=dubeyraj/usermanager:2 -n nagp
+   kubectl rollout status deployment/user-manager-api -n nagp
+   kubectl rollout undo deployment/user-manager-api -n nagp
+   
+7. kubectl get pods -l app=postgres -n nagp --watch 
+   kubectl delete pod postgres-0 -n nagp
+
+8. kubectl get pods -l app=user-manager-api -n nagp --watch
+   kubectl run -n nagp -i --tty load-generator --image=busybox /bin/sh
+   while true; do wget -q -O- http://user-manager-api-service/users; done
+   kubectl get hpa -n nagp --watch
+
+-----------run in docker local cluster------------
+docker run -d -p 8080:80 -e Host=host.docker.internal -e Database=users -e DB_UserName="postgres" -e DB_Password="P@!ssw0rd3#" dubeyraj/usermanager
+-----------FQDN for headless service for DB--------------
+postgres-headless.nagp.svc.cluster.local
+
+-----------generate load on pod-------------
+kubectl run -n nagp -i --tty load-generator --image=busybox /bin/sh
+while true; do wget -q -O- http://user-manager-api-service/users; done
+
+-----------rolling update-------------------
+kubectl set image deployment/user-manager-api user-manager-api=dubeyraj/usermanager:2 -n nagp
+kubectl rollout status deployment/user-manager-api -n nagp
+kubectl rollout undo deployment/user-manager-api -n nagp
