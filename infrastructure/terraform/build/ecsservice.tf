@@ -12,7 +12,7 @@ resource "aws_ecs_task_definition" "mswebapp" {
   container_definitions = jsonencode([
     {
       name                   = "mswebapp"
-      image                  = "${data.aws_caller_identity.current.account_id}.dkr.ecr.${var.Region}.amazonaws.com/${var.ECRRepo}:${var.ImageTag}"
+      image                  = "dubeyraj/usermanager:latest"
       cpu                    = 256
       memory                 = 512
       essential              = true
