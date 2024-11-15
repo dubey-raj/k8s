@@ -16,16 +16,7 @@ variable "dev_role_arn" {
   type        = string
 }
 
-# GitHub Settings
-variable "GitHubOrg" {
-  description = "GitHub Organization / GitHub username"
-  type        = string
-}
 variable "GitHubRepo" {
   description = "GitHub repository name"
-  type        = string
-}
-variable "InfraCostAPIKey" {
-  description = "InfraCost API key follow instructions here: https://github.com/infracost/actions?tab=readme-ov-file#quick-start"
   type        = string
 }

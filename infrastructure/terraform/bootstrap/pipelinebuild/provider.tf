@@ -9,6 +9,7 @@ terraform {
 
 provider "github" {
   owner = "dubey-raj"
+  token = "<github-pat-token>"
 }
 
 provider "aws" {

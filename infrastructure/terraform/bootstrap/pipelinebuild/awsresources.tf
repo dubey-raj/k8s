@@ -6,10 +6,7 @@ module "tfbootstrap_dev" {
   }
   Region     = var.Region
   Prefix     = var.Prefix
-  EnvCode    = "dv"
-  GitHubOrg  = var.GitHubOrg
   GitHubRepo = var.GitHubRepo
-  GitHubEnv  = "dev"
 }
 
 # DEBUGGING: Outputs for GitHub Action Secrets

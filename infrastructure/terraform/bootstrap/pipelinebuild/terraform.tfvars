@@ -8,6 +8,4 @@ Prefix = "tfboot"
 dev_role_arn  = "arn:aws:iam::977099024175:role/tfbootiardvtfassumerole"
 
 # GitHub Settings
-GitHubOrg       = "dubey-raj"
 GitHubRepo      = "k8s"
-InfraCostAPIKey = "<FILLMEIN>"

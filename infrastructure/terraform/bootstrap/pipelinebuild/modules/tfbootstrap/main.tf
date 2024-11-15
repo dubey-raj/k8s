@@ -2,11 +2,11 @@
 
 # Create Amazon S3 buckets for Terraform state file
 resource "aws_s3_bucket" "tfstate" {
-  bucket_prefix = format("%s%s%s%s", var.Prefix, "sss", var.EnvCode, "tfstate")
+  bucket_prefix = format("%s%s%s", var.Prefix, "sss", "tfstate")
   force_destroy = true
 
   tags = {
-    Name      = format("%s%s%s%s", var.Prefix, "sss", var.EnvCode, "tfstate"),
+    Name      = format("%s%s%s", var.Prefix, "sss", "tfstate"),
     rtype     = "storage"
     codeblock = "infrastructure"
   }
@@ -88,7 +88,7 @@ resource "aws_s3_bucket_public_access_block" "tfstate" {
 
 # Create Amazon DynamoDB tables for Terraform state locking
 resource "aws_dynamodb_table" "tfstate" {
-  name           = format("%s%s%s%s", var.Prefix, "ddb", var.EnvCode, "tfstate")
+  name           = format("%s%s%s", var.Prefix, "ddb", "tfstate")
   hash_key       = "LockID"
   # Billing Mode depends on usage patterns. Change as appropriate
   # read_capacity  = 20
@@ -136,7 +136,7 @@ data "aws_iam_policy_document" "ghaassumerole" {
     condition {
       test     = "StringEquals"
       variable = "token.actions.githubusercontent.com:sub"
-      values   = ["repo:${var.GitHubOrg}/${var.GitHubRepo}:environment:${var.GitHubEnv}"]
+      values   = ["repo:${var.GitHubRepo}"]
     }
   }
 }
@@ -185,20 +185,20 @@ resource "aws_iam_openid_connect_provider" "github_actions" {
 
 # Define IAM Role configured for assuming the role with web identity, tailored for GitHub Actions
 resource "aws_iam_role" "github_actions" {
-  name               = format("%s%s%s%s", var.Prefix, "iar", var.EnvCode, "gha")
+  name               = format("%s%s%s", var.Prefix, "iar", "gha")
   assume_role_policy = data.aws_iam_policy_document.ghaassumerole.json
 
     inline_policy {
-    name   = format("%s%s%s%s", var.Prefix, "iap", var.EnvCode, "TerraformState")
+    name   = format("%s%s%s", var.Prefix, "iap", "TerraformState")
     policy = data.aws_iam_policy_document.TerraformState.json
   }
     inline_policy {
-    name   = format("%s%s%s%s", var.Prefix, "iap", var.EnvCode, "SampleApp")
+    name   = format("%s%s%s", var.Prefix, "iap", "SampleApp")
     policy = data.aws_iam_policy_document.SampleApp.json
   }
 
   tags = {
-    Name  = format("%s%s%s%s", var.Prefix, "iar", var.EnvCode, "gha")
+    Name  = format("%s%s%s", var.Prefix, "iar", "gha")
     rtype = "security"
   }
 }
