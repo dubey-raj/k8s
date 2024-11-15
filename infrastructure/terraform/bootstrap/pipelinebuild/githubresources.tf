@@ -16,7 +16,6 @@ locals {
 }
 
 ### Create GitHub Secrets
-
 # IAM Role ARN used by GitHub Actions runner to deploy AWS resources
 resource "github_actions_secret" "AWS_ROLE" {
   repository      = var.GitHubRepo
@@ -51,6 +50,8 @@ resource "github_actions_secret" "TF_STATE_DYNAMODB_TABLE" {
 locals {
   # Declare GitHub Environments variables
   environment_variables_common = {
+    # Deployment role
+    AWS_ROLE          = lookup(local.gha_iam_role, "dev", null)
     # Deployment region e.g. eu-west-1
     TF_VAR_REGION     = "us-east-1"
     # Deployment Availability Zone 1 e.g. eu-west-1a

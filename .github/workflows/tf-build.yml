@@ -50,7 +50,7 @@ jobs:
         uses: aws-actions/configure-aws-credentials@v4
         with:
           aws-region: ${{ vars.TF_VAR_REGION }}
-          role-to-assume: ${{ secrets.AWS_ROLE }}
+          role-to-assume: ${{ vars.AWS_ROLE }}
           role-session-name: GitHub-Actions-OIDC-TERRAFORM 
 
       - name: Terraform Setup
