@@ -72,7 +72,16 @@ locals {
   environment_variables_dev = merge(
     local.environment_variables_common,
     {
+      TF_VAR_ENVCODE = "dv"
       TF_VAR_ENVTAG  = "Development"
     }
   )
+}
+# Create GitHub Environment Variables
+resource "github_actions_variable" "dev" {
+  for_each = local.environment_variables_dev
+
+  repository    = var.GitHubRepo
+  variable_name = each.key
+  value         = each.value
 }
