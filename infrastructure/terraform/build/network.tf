@@ -377,6 +377,7 @@ resource "aws_lb_target_group" "mswebapp" {
     create_before_destroy = true
   }
 
+
   tags = {
     Name  = format("%s%s%s%s", var.Region, "lbt", var.EnvCode, "mswebapp")
     rtype = "network"
