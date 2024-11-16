@@ -223,6 +223,7 @@ data "aws_iam_policy_document" "SampleApp" {
       "elasticloadbalancing:CreateTargetGroup",
       "elasticloadbalancing:DeleteTargetGroup",
       "elasticloadbalancing:ModifyTargetGroupAttributes"
+      "elasticloadbalancing:ModifyTargetGroup"
     ]
     resources = [
       "arn:aws:elasticloadbalancing:${var.Region}:${data.aws_caller_identity.current.account_id}:targetgroup/*/*"
