@@ -38,5 +38,5 @@ jobs:
       with:
           context: UserManagement
           push: true
-          tags: dubeyraj/usermanager
+          tags: dubeyraj/usermanager:3
           file: ./UserManagement/Dockerfile
