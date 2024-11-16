@@ -83,6 +83,3 @@ jobs:
       - name: Terraform Apply
         id: base
         run: terraform apply -auto-approve -input=false
-
-      - name: Print Web App URL in Job Summary
-        run: echo "${{ vars.TF_VAR_ENVTAG }} environment URL http://$(terraform output -raw mswebapp_alb_dns_name) :rocket:" >> $GITHUB_STEP_SUMMARY
