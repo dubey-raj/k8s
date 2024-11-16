@@ -1,5 +1,5 @@
 name: "Review and deploy Development environment"
-run-name: ${{ github.actor}} is running a Terraform review and deploy to Dev 🚀
+run-name: Deployment by ${{ github.actor}}
 on:
   push:
     branches:
@@ -83,16 +83,6 @@ jobs:
       - name: Terraform Apply
         id: base
         run: terraform apply -auto-approve -input=false
-
-      - name: Build, tag, and push docker image to Amazon ECR
-        if: steps.filter.outputs.appsrc == 'true' || env.image_exists == 'false'
-        env:
-          REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          REPOSITORY: ${{ vars.TF_VAR_ECRREPO }}
-          IMAGE_TAG: ${{ vars.TF_VAR_IMAGETAG }}
-        run: |
-          docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG -f ./appsrc/Dockerfile ./appbuild
-          docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
 
       - name: Print Web App URL in Job Summary
         run: echo "${{ vars.TF_VAR_ENVTAG }} environment URL http://$(terraform output -raw mswebapp_alb_dns_name) :rocket:" >> $GITHUB_STEP_SUMMARY
