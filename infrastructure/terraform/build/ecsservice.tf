@@ -12,15 +12,14 @@ resource "aws_ecs_task_definition" "mswebapp" {
   container_definitions = jsonencode([
     {
       name                   = "mswebapp"
-      image                  = "dubeyraj/usermanagementservice:latest"
+      image                  = "dubeyraj/usermanagementservice:2"
       cpu                    = 256
       memory                 = 512
       essential              = true
       readonlyRootFilesystem = true
       portMappings = [
         {
-          containerPort = 80
-          hostPort      = 80
+          containerPort = 8080
           protocol      = "tcp"
         }
       ]
@@ -54,7 +53,7 @@ resource "aws_ecs_service" "mswebapp" {
   load_balancer {
     target_group_arn = aws_lb_target_group.mswebapp.arn
     container_name   = "mswebapp"
-    container_port   = 80
+    container_port   = 8080
   }
 
   tags = {
