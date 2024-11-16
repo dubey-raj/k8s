@@ -59,7 +59,7 @@ locals {
     # Deployment Availability Zone 2 e.g. eu-west-1b
     TF_VAR_AZ02       = "us-east-1b"
     # The Public IP address from which the web application will be accessed e.g. x.x.x.x/32
-    TF_VAR_PUBLICIP   = "10.0.0.1/32"
+    TF_VAR_PUBLICIP   = "0.0.0.0/0"
     # A prefix appended to the name of all AWS-created resources e.g. ghablog WARNING: use lowercase character only and no symbols
     TF_VAR_PREFIX     = "ghablog"
     TF_VAR_SOLTAG     = "AWS-GHA-TF-MSFT"

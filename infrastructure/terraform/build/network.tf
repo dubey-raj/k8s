@@ -356,7 +356,7 @@ resource "aws_lb_listener" "mswebapp" {
 # WARNING: Lifecyle and name_prefix added for testing. Issue discussed here https://github.com/hashicorp/terraform-provider-aws/issues/16889
 resource "aws_lb_target_group" "mswebapp" {
   name_prefix                   = "msweb-"
-  port                          = 8080
+  port                          = 80
   protocol                      = "HTTP"
   target_type                   = "ip"
   vpc_id                        = aws_vpc.vpc_01.id

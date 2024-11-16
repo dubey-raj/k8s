@@ -134,9 +134,9 @@ data "aws_iam_policy_document" "ghaassumerole" {
     }
 
     condition {
-      test     = "StringEquals"
+      test     = "StringLike"
       variable = "token.actions.githubusercontent.com:sub"
-      values   = ["repo:${var.GitHubRepo}"]
+      values   = ["repo:dubey-raj/${var.GitHubRepo}:*"]
     }
   }
 }

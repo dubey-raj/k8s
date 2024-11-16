@@ -222,7 +222,7 @@ data "aws_iam_policy_document" "SampleApp" {
       "elasticloadbalancing:AddTags",
       "elasticloadbalancing:CreateTargetGroup",
       "elasticloadbalancing:DeleteTargetGroup",
-      "elasticloadbalancing:ModifyTargetGroupAttributes"
+      "elasticloadbalancing:ModifyTargetGroupAttributes",
       "elasticloadbalancing:ModifyTargetGroup"
     ]
     resources = [
