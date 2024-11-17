@@ -1,9 +1,10 @@
-name: "Review and deploy Development environment"
-run-name: ${{ github.actor}} is running a Terraform review and deploy to Dev 🚀
+name: "Build and deploy"
+run-name: Deployment by ${{ github.actor}}
 on:
   push:
     branches:
       - master
+  workflow_dispatch:
 permissions:
       # id-token write required for OIDC, contents read required for actions/checkout
       id-token: write
@@ -15,7 +16,7 @@ env:
    AWS_BUCKET_KEY_NAME: ${{ secrets.TF_STATE_BUCKET_KEY }}
 
 jobs:
-  release_to_dev:
+  deploy:
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -40,11 +41,17 @@ jobs:
       - name: Git checkout
         uses: actions/checkout@v4
 
+      - name: Login to DockerHub
+        uses: docker/login-action@v1
+        with:
+            username: ${{ secrets.DOCKERHUB_USERNAME }}
+            password: ${{ secrets.DOCKERHUB_TOKEN }}
+
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
           aws-region: ${{ vars.TF_VAR_REGION }}
-          role-to-assume: ${{ secrets.AWS_ROLE }}
+          role-to-assume: ${{ vars.AWS_ROLE }}
           role-session-name: GitHub-Actions-OIDC-TERRAFORM 
 
       - name: Terraform Setup
@@ -77,55 +84,3 @@ jobs:
       - name: Terraform Apply
         id: base
         run: terraform apply -auto-approve -input=false
-
-      - name: Check ECS image exists
-        id: ecsimage
-        run: |
-          if aws ecr describe-images --repository-name ${{ vars.TF_VAR_ECRREPO }} --image-ids imageTag=${{ vars.TF_VAR_IMAGETAG }} >/dev/null 2>&1
-          then
-            echo "image_exists=true" >> "$GITHUB_ENV"
-          else
-            echo "image_exists=false" >> "$GITHUB_ENV"
-          fi
-
-      - name: Check for changes in ./appsrc
-        uses: dorny/paths-filter@v3
-        id: filter
-        with:
-          base: ${{ github.ref }}
-          filters: |
-            appsrc:
-              - 'build/appsrc/**'
-
-      - name: Replace placeholder in Program.cs
-        if: steps.filter.outputs.appsrc == 'true' || env.image_exists == 'false'
-        run: sed -i 's/\$Environment/${{ vars.TF_VAR_ENVTAG }}/g' ./appsrc/Program.cs
-
-      # https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-net
-      - name: Setup .NET
-        if: steps.filter.outputs.appsrc == 'true' || env.image_exists == 'false'
-        uses: actions/setup-dotnet@v4
-        with:
-          dotnet-version: 8.0.x
-
-      - name: Build .NET
-        if: steps.filter.outputs.appsrc == 'true' || env.image_exists == 'false'
-        run: dotnet publish ./appsrc -c Release --no-restore --property:PublishDir=${{ github.workspace }}/build/appbuild
-
-      - name: Login to Amazon ECR
-        if: steps.filter.outputs.appsrc == 'true' || env.image_exists == 'false'
-        id: login-ecr
-        uses: aws-actions/amazon-ecr-login@v2
-
-      - name: Build, tag, and push docker image to Amazon ECR
-        if: steps.filter.outputs.appsrc == 'true' || env.image_exists == 'false'
-        env:
-          REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          REPOSITORY: ${{ vars.TF_VAR_ECRREPO }}
-          IMAGE_TAG: ${{ vars.TF_VAR_IMAGETAG }}
-        run: |
-          docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG -f ./appsrc/Dockerfile ./appbuild
-          docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
-
-      - name: Print Web App URL in Job Summary
-        run: echo "${{ vars.TF_VAR_ENVTAG }} environment URL http://$(terraform output -raw mswebapp_alb_dns_name) :rocket:" >> $GITHUB_STEP_SUMMARY
