@@ -45,13 +45,13 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
   
-    - name: Build and push docker Image
-      uses: docker/build-push-action@v2
-      with:
-          context: UserManagement
-          push: true
-          tags: dubeyraj/usermanager:${{github.run_id}}
-          file: ./UserManagement/Dockerfile
+    # - name: Build and push docker Image
+    #   uses: docker/build-push-action@v2
+    #   with:
+    #       context: UserManagement
+    #       push: true
+    #       tags: dubeyraj/usermanager:${{github.run_id}}
+    #       file: ./UserManagement/Dockerfile
   
   deploy:
     needs: [build]
@@ -81,16 +81,23 @@ jobs:
         uses: hashicorp/setup-terraform@v3
         with:
           terraform_version: 1.7.1
+      
+      - name: List Directory
+        run: echo "Current directory ${{ github.workspace }}" 
 
-      - name: Terraform Init
-        id: init
-        run: terraform init -backend-config="bucket=${{ secrets.TF_STATE_BUCKET_NAME }}" -backend-config="key=${{ secrets.TF_STATE_BUCKET_KEY }}" -backend-config="region=${{ vars.TF_VAR_REGION }}" -backend-config="encrypt=true" -backend-config="dynamodb_table=${{ secrets.TF_STATE_DYNAMODB_TABLE }}" -input=false
+      - name: List files in the repository
+        run: |
+            ls ${{ github.workspace }}
 
-      - name: Terraform Plan
-        id: plan
-        run: terraform plan -no-color -input=false
-        continue-on-error: true
+      # - name: Terraform Init
+      #   id: init
+      #   run: terraform init -backend-config="bucket=${{ secrets.TF_STATE_BUCKET_NAME }}" -backend-config="key=${{ secrets.TF_STATE_BUCKET_KEY }}" -backend-config="region=${{ vars.TF_VAR_REGION }}" -backend-config="encrypt=true" -backend-config="dynamodb_table=${{ secrets.TF_STATE_DYNAMODB_TABLE }}" -input=false
 
-      - name: Terraform Apply
-        id: base
-        run: terraform apply -auto-approve -input=false      
+      # - name: Terraform Plan
+      #   id: plan
+      #   run: terraform plan -no-color -input=false
+      #   continue-on-error: true
+
+      # - name: Terraform Apply
+      #   id: base
+      #   run: terraform apply -auto-approve -input=false      
