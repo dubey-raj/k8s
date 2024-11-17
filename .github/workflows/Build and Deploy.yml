@@ -58,7 +58,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: infrastructure/terraform/build
+        working-directory: ./infrastructure/terraform/build
     environment: 
       name: dev
     env:
@@ -77,6 +77,7 @@ jobs:
       TF_VAR_ImageTag: ${{ vars.TF_VAR_IMAGETAG }}
     
     steps:
+      - uses: actions/checkout@v4
       - name: Terraform Setup
         uses: hashicorp/setup-terraform@v3
         with:
