@@ -27,6 +27,7 @@ data "aws_iam_policy_document" "SampleApp" {
       "ecs:DescribeTaskDefinition",
       "ecs:DeregisterTaskDefinition",
       "elasticloadbalancing:CreateListener",
+      "elasticloadbalancing:ModifyListener",
       "elasticloadbalancing:CreateLoadBalancer",
       "elasticloadbalancing:DescribeListeners",
       "elasticloadbalancing:DescribeLoadBalancerAttributes",
