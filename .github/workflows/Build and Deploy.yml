@@ -58,7 +58,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: ././infrastructure/terraform/build
+        working-directory: infrastructure/terraform/build
     environment: 
       name: dev
     env:
