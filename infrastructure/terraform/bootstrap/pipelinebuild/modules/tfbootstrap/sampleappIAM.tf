@@ -105,7 +105,8 @@ data "aws_iam_policy_document" "SampleApp" {
       "ec2:AuthorizeSecurityGroupIngress",
       "ec2:CreateSecurityGroup",
       "ec2:DeleteSecurityGroup",
-      "ec2:RevokeSecurityGroupEgress"
+      "ec2:RevokeSecurityGroupEgress",
+      "ec2:RevokeSecurityGroupIngress"
     ]
     resources = [
       "arn:aws:ec2:${var.Region}:${data.aws_caller_identity.current.account_id}:security-group/*"
