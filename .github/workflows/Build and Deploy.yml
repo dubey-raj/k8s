@@ -17,7 +17,6 @@ env:
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -75,16 +74,22 @@ jobs:
       TF_VAR_FQDN: ${{ vars.TF_VAR_FQDN }}
       TF_VAR_ECRRepo: ${{ vars.TF_VAR_ECRREPO }}
       TF_VAR_ImageTag: ${{ vars.TF_VAR_IMAGETAG }}
+    
     steps:
+      - name: Terraform Setup
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.7.1
+
       - name: Terraform Init
-          id: init
-          run: terraform init -backend-config="bucket=${{ secrets.TF_STATE_BUCKET_NAME }}" -backend-config="key=${{ secrets.TF_STATE_BUCKET_KEY }}" -backend-config="region=${{ vars.TF_VAR_REGION }}" -backend-config="encrypt=true" -backend-config="dynamodb_table=${{ secrets.TF_STATE_DYNAMODB_TABLE }}" -input=false
+        id: init
+        run: terraform init -backend-config="bucket=${{ secrets.TF_STATE_BUCKET_NAME }}" -backend-config="key=${{ secrets.TF_STATE_BUCKET_KEY }}" -backend-config="region=${{ vars.TF_VAR_REGION }}" -backend-config="encrypt=true" -backend-config="dynamodb_table=${{ secrets.TF_STATE_DYNAMODB_TABLE }}" -input=false
 
       - name: Terraform Plan
-          id: plan
-          run: terraform plan -no-color -input=false
-          continue-on-error: true
+        id: plan
+        run: terraform plan -no-color -input=false
+        continue-on-error: true
 
       - name: Terraform Apply
-          id: base
-          run: terraform apply -auto-approve -input=false
+        id: base
+        run: terraform apply -auto-approve -input=false      
