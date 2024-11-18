@@ -40,6 +40,17 @@ namespace UserManagement.Controllers
         }
 
         /// <summary>
+        /// Login user
+        /// </summary>
+        /// <returns></returns>
+        [HttpPost]
+        [Route("/token")]
+        public string Login(User user)
+        {
+            return "eyddfd.rtet454535.gdfdgeter";
+        }
+
+        /// <summary>
         /// Add a new user
         /// </summary>
         /// <returns></returns>
