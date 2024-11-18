@@ -56,7 +56,7 @@ resource "aws_kms_key" "kms_key" {
   policy                  = data.aws_iam_policy_document.appkms.json
 
   tags = {
-    Name         = format("%s%s%s%s", var.Prefix, "kms", var.EnvCode, "mswebapp")
+    Name         = format("%s-%s-%s", var.Application, "kms", var.EnvCode)
     resourcetype = "security"
     codeblock    = "ecscluster"
   }
@@ -64,31 +64,31 @@ resource "aws_kms_key" "kms_key" {
 
 # Create KMS Alias. Only used in this context to provide a friendly display name
 resource "aws_kms_alias" "kms_alias" {
-  name          = "alias/mswebapp"
+  name          = "alias/${var.Application}"
   target_key_id = aws_kms_key.kms_key.key_id
 }
 
 # Create CloudWatch log group for ECS logs 
-resource "aws_cloudwatch_log_group" "ecscluster" {
-  name              = format("%s%s%s%s", var.Prefix, "cwl", var.EnvCode, "ecscluster")
+resource "aws_cloudwatch_log_group" "ecscluster_logs" {
+  name              = format("%s%s%s%s", var.Application, "cwl", var.EnvCode, "ecscluster")
   retention_in_days = 90
   kms_key_id        = aws_kms_key.kms_key.arn
 
   tags = {
-    Name         = format("%s%s%s%s", var.Prefix, "cwl", var.EnvCode, "ecscluster")
+    Name         = format("%s%s%s%s", var.Application, "cwl", var.EnvCode, "ecscluster")
     resourcetype = "monitor"
     codeblock    = "ecscluster"
   }
 }
 
 # Create CloudWatch log group for Application logs
-resource "aws_cloudwatch_log_group" "log_group" {
-  name              = format("%s%s%s%s", var.Prefix, "cwl", var.EnvCode, "mswebapp")
+resource "aws_cloudwatch_log_group" "app_logs" {
+  name              = format("%s/%s/%s", "ecs",var.Application, var.EnvCode)
   retention_in_days = 30
   kms_key_id        = aws_kms_key.kms_key.arn
 
   tags = {
-    Name         = format("%s%s%s%s", var.Prefix, "cwl", var.EnvCode, "mswebapp")
+    Name         = format("%s/%s/%s", "ecs",var.Application, var.EnvCode)
     resourcetype = "monitor"
     codeblock    = "ecscluster"
   }
@@ -96,7 +96,7 @@ resource "aws_cloudwatch_log_group" "log_group" {
 
 # Create Amazon ECS cluster 
 resource "aws_ecs_cluster" "ecs_cluster" {
-  name = format("%s%s%s%s", var.Prefix, "ecs", var.EnvCode, "mswebapp")
+  name = format("%s-%s", var.Application, var.EnvCode)
 
   setting {
     name  = "containerInsights"
@@ -110,13 +110,13 @@ resource "aws_ecs_cluster" "ecs_cluster" {
 
       log_configuration {
         cloud_watch_encryption_enabled = true
-        cloud_watch_log_group_name     = aws_cloudwatch_log_group.ecscluster.name
+        cloud_watch_log_group_name     = aws_cloudwatch_log_group.ecscluster_logs.name
       }
     }
   }
 
   tags = {
-    Name         = format("%s%s%s%s", var.Prefix, "ecs", var.EnvCode, "mswebapp")
+    Name         = format("%s-%s", var.Application, var.EnvCode)
     resourcetype = "storage"
     codeblock    = "ecscluster"
   }
@@ -124,7 +124,7 @@ resource "aws_ecs_cluster" "ecs_cluster" {
 
 # Establish IAM Role with permissions for Amazon ECS to access Amazon ECR for image pulling and CloudWatch for logging
 resource "aws_iam_role" "ecstaskexec" {
-  name = format("%s%s%s%s", var.Prefix, "iar", var.EnvCode, "ecstaskexec")
+  name = format("%s%s%s%s", var.Application, "iar", var.EnvCode, "ecstaskexec")
   assume_role_policy = jsonencode({
     Version = "2012-10-17",
     Statement = [

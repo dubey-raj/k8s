@@ -62,18 +62,7 @@ jobs:
     environment: 
       name: dev
     env:
-      TF_VAR_Region: ${{ vars.TF_VAR_REGION }}
-      TF_VAR_AZ01: ${{ vars.TF_VAR_AZ01 }}
-      TF_VAR_AZ02: ${{ vars.TF_VAR_AZ02 }}
-      TF_VAR_PublicIP: ${{ vars.TF_VAR_PUBLICIP }}
-      TF_VAR_Prefix: ${{ vars.TF_VAR_PREFIX }}
-      TF_VAR_SolTag: ${{ vars.TF_VAR_SOLTAG }}
-      TF_VAR_GitHubRepo: ${{ vars.TF_VAR_GITHUBREPO }}
-      TF_VAR_EnvCode: ${{ vars.TF_VAR_ENVCODE }}
-      TF_VAR_EnvTag: ${{ vars.TF_VAR_ENVTAG }}
-      TF_VAR_VPCCIDR: ${{ vars.TF_VAR_VPCCIDR }}
       TF_VAR_FQDN: ${{ vars.TF_VAR_FQDN }}
-      TF_VAR_ECRRepo: ${{ vars.TF_VAR_ECRREPO }}
       TF_VAR_ImageTag: ${{ vars.TF_VAR_IMAGETAG }}
     
     steps:
