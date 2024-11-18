@@ -70,12 +70,12 @@ resource "aws_kms_alias" "kms_alias" {
 
 # Create CloudWatch log group for ECS logs 
 resource "aws_cloudwatch_log_group" "ecscluster_logs" {
-  name              = format("%s%s%s%s", var.Application, "cwl", var.EnvCode, "ecscluster")
+  name              = format("%s/%s/%s", "ecscluster", var.Application, var.Region)
   retention_in_days = 90
   kms_key_id        = aws_kms_key.kms_key.arn
 
   tags = {
-    Name         = format("%s%s%s%s", var.Application, "cwl", var.EnvCode, "ecscluster")
+    Name         = format("%s/%s/%s", "ecscluster", var.Application, var.Region)
     resourcetype = "monitor"
     codeblock    = "ecscluster"
   }
@@ -124,7 +124,7 @@ resource "aws_ecs_cluster" "ecs_cluster" {
 
 # Establish IAM Role with permissions for Amazon ECS to access Amazon ECR for image pulling and CloudWatch for logging
 resource "aws_iam_role" "ecstaskexec" {
-  name = format("%s%s%s%s", var.Application, "iar", var.EnvCode, "ecstaskexec")
+  name = format("%s-%s-%s", "ecstaskexec", var.Application, var.Region)
   assume_role_policy = jsonencode({
     Version = "2012-10-17",
     Statement = [
@@ -139,13 +139,13 @@ resource "aws_iam_role" "ecstaskexec" {
   })
 
   tags = {
-    Name  = format("%s%s%s%s", var.Region, "iar", var.EnvCode, "ecstaskexec")
+    Name  = format("%s-%s-%s", "ecstaskexec", var.Application, var.Region)
     rtype = "security"
   }
 }
 
 resource "aws_iam_role_policy" "ecstaskexecaccess" {
-  name = format("%s%s%s%s", var.Region, "irp", var.EnvCode, "ecstaskexec")
+  name = format("%s-%s-%s", "ecstaskexec", var.Application, var.Region)
   role = aws_iam_role.ecstaskexec.id
   policy = jsonencode({
     Version = "2012-10-17"
