@@ -28,7 +28,7 @@ resource "aws_ecs_task_definition" "ecs-task-definition" {
         options = {
           awslogs-group         = "${aws_cloudwatch_log_group.app_logs.name}",
           awslogs-region        = "${var.Region}",
-          awslogs-stream-Application = "ecs"
+          awslogs-stream-prefix = "ecs"
         }
       }
     }
@@ -37,7 +37,7 @@ resource "aws_ecs_task_definition" "ecs-task-definition" {
 
 # Create Amazon ECS task service
 resource "aws_ecs_service" "ecs-service" {
-  name            = format("%s%s%s%s", var.Region, "iar", var.EnvCode, "svcmswebapp")
+  name            = format("%s-%s", var.Application, var.EnvCode)
   cluster         = aws_ecs_cluster.ecs_cluster.id
   task_definition = aws_ecs_task_definition.ecs-task-definition.arn
   launch_type     = "FARGATE"
@@ -57,7 +57,7 @@ resource "aws_ecs_service" "ecs-service" {
   }
 
   tags = {
-    Name  = format("%s%s%s%s", var.Region, "iar", var.EnvCode, "svcmswebapp")
+    Name  = format("%s-%s", var.Application, var.EnvCode)
     rtype = "ecsservice"
   }
 }
