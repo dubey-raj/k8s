@@ -2,7 +2,7 @@
 
 data "aws_caller_identity" "current" {}
 
-data "aws_iam_policy_document" "mswebappkms" {
+data "aws_iam_policy_document" "appkms" {
   statement {
     # https://docs.aws.amazon.com/kms/latest/developerguide/key-policy-overview.html
     sid    = "Enable IAM User Permissions"
@@ -49,11 +49,11 @@ data "aws_iam_policy_document" "mswebappkms" {
 }
 
 # Create KMS key for solution
-resource "aws_kms_key" "mswebapp" {
+resource "aws_kms_key" "kms_key" {
   description             = "KMS key to secure various aspects of an example Microsoft .NET web application"
   deletion_window_in_days = 7
   enable_key_rotation     = true
-  policy                  = data.aws_iam_policy_document.mswebappkms.json
+  policy                  = data.aws_iam_policy_document.appkms.json
 
   tags = {
     Name         = format("%s%s%s%s", var.Prefix, "kms", var.EnvCode, "mswebapp")
@@ -63,16 +63,16 @@ resource "aws_kms_key" "mswebapp" {
 }
 
 # Create KMS Alias. Only used in this context to provide a friendly display name
-resource "aws_kms_alias" "mswebapp" {
+resource "aws_kms_alias" "kms_alias" {
   name          = "alias/mswebapp"
-  target_key_id = aws_kms_key.mswebapp.key_id
+  target_key_id = aws_kms_key.kms_key.key_id
 }
 
 # Create CloudWatch log group for ECS logs 
 resource "aws_cloudwatch_log_group" "ecscluster" {
   name              = format("%s%s%s%s", var.Prefix, "cwl", var.EnvCode, "ecscluster")
   retention_in_days = 90
-  kms_key_id        = aws_kms_key.mswebapp.arn
+  kms_key_id        = aws_kms_key.kms_key.arn
 
   tags = {
     Name         = format("%s%s%s%s", var.Prefix, "cwl", var.EnvCode, "ecscluster")
@@ -82,10 +82,10 @@ resource "aws_cloudwatch_log_group" "ecscluster" {
 }
 
 # Create CloudWatch log group for Application logs
-resource "aws_cloudwatch_log_group" "mswebapp" {
+resource "aws_cloudwatch_log_group" "log_group" {
   name              = format("%s%s%s%s", var.Prefix, "cwl", var.EnvCode, "mswebapp")
   retention_in_days = 30
-  kms_key_id        = aws_kms_key.mswebapp.arn
+  kms_key_id        = aws_kms_key.kms_key.arn
 
   tags = {
     Name         = format("%s%s%s%s", var.Prefix, "cwl", var.EnvCode, "mswebapp")
@@ -94,55 +94,8 @@ resource "aws_cloudwatch_log_group" "mswebapp" {
   }
 }
 
-# Create Amazon ECR repository to store Docker image
-resource "aws_ecr_repository" "mswebapp" {
-  name                 = var.ECRRepo
-  image_tag_mutability = "MUTABLE"
-  force_delete         = true
-
-  image_scanning_configuration {
-    scan_on_push = true
-  }
-
-  encryption_configuration {
-    encryption_type = "KMS"
-    kms_key         = aws_kms_key.mswebapp.arn
-  }
-
-  tags = {
-    Name         = format("%s%s%s%s", var.Prefix, "ecs", var.EnvCode, "mswebapp")
-    resourcetype = "compute"
-    codeblock    = "ecscluster"
-  }
-}
-
-# Create ECR lifecycle policy to delete untagged images after 1 day
-resource "aws_ecr_lifecycle_policy" "mswebapp" {
-  repository = aws_ecr_repository.mswebapp.name
-
-  policy = <<EOF
-{
-  "rules": [
-    {
-      "rulePriority": 1,
-      "description": "Delete untagged images after one day",
-      "selection": {
-        "tagStatus": "untagged",
-        "countType": "sinceImagePushed",
-        "countUnit": "days",
-        "countNumber": 1
-      },
-      "action": {
-        "type": "expire"
-      }
-    }
-  ]
-}
-EOF
-}
-
 # Create Amazon ECS cluster 
-resource "aws_ecs_cluster" "mswebapp" {
+resource "aws_ecs_cluster" "ecs_cluster" {
   name = format("%s%s%s%s", var.Prefix, "ecs", var.EnvCode, "mswebapp")
 
   setting {
@@ -152,7 +105,7 @@ resource "aws_ecs_cluster" "mswebapp" {
 
   configuration {
     execute_command_configuration {
-      kms_key_id = aws_kms_key.mswebapp.arn
+      kms_key_id = aws_kms_key.kms_key.arn
       logging    = "OVERRIDE"
 
       log_configuration {
@@ -191,7 +144,7 @@ resource "aws_iam_role" "ecstaskexec" {
   }
 }
 
-resource "aws_iam_role_policy" "ecstaskexec" {
+resource "aws_iam_role_policy" "ecstaskexecaccess" {
   name = format("%s%s%s%s", var.Region, "irp", var.EnvCode, "ecstaskexec")
   role = aws_iam_role.ecstaskexec.id
   policy = jsonencode({
@@ -204,15 +157,6 @@ resource "aws_iam_role_policy" "ecstaskexec" {
         ]
         Effect   = "Allow"
         Resource = ["*"]
-      },
-      {
-        Action = [
-          "ecr:BatchCheckLayerAvailability",
-          "ecr:GetDownloadUrlForLayer",
-          "ecr:BatchGetImage"
-        ]
-        Effect   = "Allow"
-        Resource = ["${aws_ecr_repository.mswebapp.arn}"]
       },
       {
         # https://docs.aws.amazon.com/AmazonECS/latest/developerguide/instance_IAM_role.html#cwl_iam_policy

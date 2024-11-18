@@ -58,7 +58,7 @@ resource "aws_iam_role_policy" "vpclogging" {
 resource "aws_cloudwatch_log_group" "vpc_01" {
   name              = format("%s%s%s%s", var.Prefix, "cwl", var.EnvCode, "vpc01flow")
   retention_in_days = 90
-  kms_key_id        = aws_kms_key.mswebapp.arn
+  kms_key_id        = aws_kms_key.kms_key.arn
 
   tags = {
     Name         = format("%s%s%s%s", var.Prefix, "cwl", var.EnvCode, "vpc01flow")
@@ -309,7 +309,7 @@ resource "aws_security_group" "app01" {
 
 # Create Application Load Balancer
 # WARNING: Consider implementing AWS WAFv2 in front of an Application Load Balancer for production environments
-resource "aws_lb" "mswebapp" {
+resource "aws_lb" "alb" {
   name                       = format("%s%s%s%s", var.Prefix, "alb", var.EnvCode, "mswebapp")
   internal                   = false
   load_balancer_type         = "application"
@@ -330,20 +330,20 @@ resource "aws_lb" "mswebapp" {
 }
 
 # Output ALB DNS name for GitHub Actions job output
-output "mswebapp_alb_dns_name" {
-  value = aws_lb.mswebapp.dns_name
+output "alb_dns_name" {
+  value = aws_lb.alb.dns_name
 }
 
 # Create ALB listener
 # WARNING: Consider changing port to 443 and protocol to HTTPS for production environments 
-resource "aws_lb_listener" "mswebapp" {
-  load_balancer_arn = aws_lb.mswebapp.arn
+resource "aws_lb_listener" "alb_listener" {
+  load_balancer_arn = aws_lb.alb.arn
   port              = "80"
   protocol          = "HTTP"
 
   default_action {
     type             = "forward"
-    target_group_arn = aws_lb_target_group.mswebapp.arn
+    target_group_arn = aws_lb_target_group.alb-target-group.arn
   }
 
   tags = {
@@ -354,8 +354,8 @@ resource "aws_lb_listener" "mswebapp" {
 
 # Define ALB Target Group
 # WARNING: Lifecyle and name_prefix added for testing. Issue discussed here https://github.com/hashicorp/terraform-provider-aws/issues/16889
-resource "aws_lb_target_group" "mswebapp" {
-  name_prefix                   = "msweb-"
+resource "aws_lb_target_group" "alb-target-group" {
+  name_prefix                   = "tg-"
   port                          = 80
   protocol                      = "HTTP"
   target_type                   = "ip"
