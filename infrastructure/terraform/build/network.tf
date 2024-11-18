@@ -14,7 +14,7 @@ resource "aws_vpc" "vpc_01" {
 
 # IAM role for VPC flow logging
 resource "aws_iam_role" "vpclogging" {
-  name = format("%s%s%s%s", var.Application, "iar", var.EnvCode, "vpclogging")
+  name = format("%s-%s-%s", "vpclogging", var.Application, var.Region)
   assume_role_policy = jsonencode({
     Version = "2012-10-17",
     Statement = [
@@ -29,7 +29,7 @@ resource "aws_iam_role" "vpclogging" {
   })
 
   tags = {
-    Name  = format("%s%s%s%s", var.Region, "iar", var.EnvCode, "vpclogging")
+    Name  = format("%s-%s-%s", "vpclogging", var.Application, var.Region)
     rtype = "security"
   }
 }

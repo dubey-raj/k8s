@@ -96,7 +96,7 @@ resource "aws_cloudwatch_log_group" "app_logs" {
 
 # Create Amazon ECS cluster 
 resource "aws_ecs_cluster" "ecs_cluster" {
-  name = format("%s-%s", var.Application, var.EnvCode)
+  name = var.Application
 
   setting {
     name  = "containerInsights"
