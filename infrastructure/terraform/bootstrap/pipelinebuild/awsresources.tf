@@ -6,5 +6,5 @@ module "tfbootstrap_dev" {
   }
   Region     = var.Region
   Prefix     = var.Prefix
-  GitHubRepo = var.GitHubRepo
+  GitHubRepos = var.GitHubRepos
 }

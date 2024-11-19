@@ -10,7 +10,7 @@ variable "Prefix" {
   type        = string
 }
 
-variable "GitHubRepo" {
-  description = "GitHub repository name"
-  type        = string
+variable "GitHubRepos" {
+  description = "GitHub repositories name"
+  type        = list(string)
 }

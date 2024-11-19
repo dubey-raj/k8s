@@ -8,4 +8,4 @@ Prefix = "tfboot"
 dev_role_arn  = "arn:aws:iam::977099024175:role/tfbootiardvtfassumerole"
 
 # GitHub Settings
-GitHubRepo      = "k8s"
+GitHubRepos      = ["k8s"]

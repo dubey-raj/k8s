@@ -136,7 +136,10 @@ data "aws_iam_policy_document" "ghaassumerole" {
     condition {
       test     = "StringLike"
       variable = "token.actions.githubusercontent.com:sub"
-      values   = ["repo:dubey-raj/${var.GitHubRepo}:*"]
+      values   = [
+        for repo in var.GitHubRepos:
+        "repo:dubey-raj/${repo}:*"
+        ]
     }
   }
 }
