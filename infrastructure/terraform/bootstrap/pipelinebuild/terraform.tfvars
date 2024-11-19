@@ -9,5 +9,6 @@ dev_role_arn  = "arn:aws:iam::977099024175:role/tf-us-east-1-tfassumerole"
 
 # GitHub Settings
 GitHubRepos      = ["recommendation-service",
-                    "products-service"
+                    "products-service",
+                    "k8s"
                     ]
