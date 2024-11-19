@@ -2,11 +2,11 @@
 
 # Create Amazon S3 buckets for Terraform state file
 resource "aws_s3_bucket" "tfstate" {
-  bucket_prefix = format("%s%s%s", var.Prefix, "sss", "tfstate")
+  bucket_prefix = format("%s-%s-%s", var.Prefix, var.Region,"tfstate")
   force_destroy = true
 
   tags = {
-    Name      = format("%s%s%s", var.Prefix, "sss", "tfstate"),
+    Name      = format("%s-%s-%s", var.Prefix, var.Region,"tfstate")
     rtype     = "storage"
     codeblock = "infrastructure"
   }
@@ -88,7 +88,7 @@ resource "aws_s3_bucket_public_access_block" "tfstate" {
 
 # Create Amazon DynamoDB tables for Terraform state locking
 resource "aws_dynamodb_table" "tfstate" {
-  name           = format("%s%s%s", var.Prefix, "ddb", "tfstate")
+  name           = format("%s-%s-%s", var.Prefix, var.Region, "tfstate")
   hash_key       = "LockID"
   # Billing Mode depends on usage patterns. Change as appropriate
   # read_capacity  = 20
@@ -188,20 +188,20 @@ resource "aws_iam_openid_connect_provider" "github_actions" {
 
 # Define IAM Role configured for assuming the role with web identity, tailored for GitHub Actions
 resource "aws_iam_role" "github_actions" {
-  name               = format("%s%s%s", var.Prefix, "iar", "gha")
+  name               = format("%s-%s-%s", var.Prefix, var.Region, "assume-role-gha")
   assume_role_policy = data.aws_iam_policy_document.ghaassumerole.json
 
     inline_policy {
-    name   = format("%s%s%s", var.Prefix, "iap", "TerraformState")
+    name   = format("%s-%s-%s", var.Prefix, var.Region, "tfstate-access")
     policy = data.aws_iam_policy_document.TerraformState.json
   }
     inline_policy {
-    name   = format("%s%s%s", var.Prefix, "iap", "SampleApp")
-    policy = data.aws_iam_policy_document.SampleApp.json
+    name   = format("%s-%s-%s", var.Prefix, var.Region, "deployment-role-access")
+    policy = data.aws_iam_policy_document.DeploymentRoleAccess.json
   }
 
   tags = {
-    Name  = format("%s%s%s", var.Prefix, "iar", "gha")
+    Name  = format("%s-%s-%s", var.Prefix, var.Region, "assume-role-gha")
     rtype = "security"
   }
 }

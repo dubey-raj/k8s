@@ -54,26 +54,26 @@ resource "aws_iam_role_policy" "vpclogging" {
   })
 }
 
-# Create CloudWatch log group for VPC
-resource "aws_cloudwatch_log_group" "vpc_01" {
-  name              = format("%s%s%s%s", var.Application, "cwl", var.EnvCode, "vpc01flow")
-  retention_in_days = 90
-  kms_key_id        = aws_kms_key.kms_key.arn
+# # Create CloudWatch log group for VPC
+# resource "aws_cloudwatch_log_group" "vpc_01" {
+#   name              = format("%s%s%s%s", var.Application, "cwl", var.EnvCode, "vpc01flow")
+#   retention_in_days = 90
+#   kms_key_id        = aws_kms_key.kms_key.arn
 
-  tags = {
-    Name         = format("%s%s%s%s", var.Application, "cwl", var.EnvCode, "vpc01flow")
-    resourcetype = "monitor"
-    codeblock    = "network"
-  }
-}
+#   tags = {
+#     Name         = format("%s%s%s%s", var.Application, "cwl", var.EnvCode, "vpc01flow")
+#     resourcetype = "monitor"
+#     codeblock    = "network"
+#   }
+# }
 
-# Configure VPC flow logs
-resource "aws_flow_log" "vpc_01" {
-  iam_role_arn    = aws_iam_role.vpclogging.arn
-  log_destination = aws_cloudwatch_log_group.vpc_01.arn
-  traffic_type    = "ALL"
-  vpc_id          = aws_vpc.vpc_01.id
-}
+# # Configure VPC flow logs
+# resource "aws_flow_log" "vpc_01" {
+#   iam_role_arn    = aws_iam_role.vpclogging.arn
+#   log_destination = aws_cloudwatch_log_group.vpc_01.arn
+#   traffic_type    = "ALL"
+#   vpc_id          = aws_vpc.vpc_01.id
+# }
 
 # Create Internet Gateway
 resource "aws_internet_gateway" "internet_gateway_01" {

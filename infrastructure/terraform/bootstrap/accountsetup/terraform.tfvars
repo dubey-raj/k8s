@@ -3,4 +3,4 @@
 Region = "us-east-1"
 
 # Tagging and naming
-Prefix = "tfboot"
+Prefix = "tf"

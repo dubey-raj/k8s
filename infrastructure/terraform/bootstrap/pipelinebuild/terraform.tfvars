@@ -2,7 +2,7 @@
 Region = "us-east-1"
 
 # Tagging and Naming
-Prefix = "tfboot"
+Prefix = "tf"
 
 # Assumed role ARNs
 dev_role_arn  = "arn:aws:iam::977099024175:role/tfbootiardvtfassumerole"

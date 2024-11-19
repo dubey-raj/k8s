@@ -66,16 +66,16 @@ data "aws_iam_policy_document" "tfbootstrap" {
 
 # IAM role for Terraform bootstrapping
 resource "aws_iam_role" "assumerole" {
-  name                = format("%s%s%s%s", var.Prefix, "iar", var.Environment, "tfassumerole")
+  name                = format("%s-%s-%s", var.Prefix, var.Region, "tfassumerole")
   description         = "This role can be assumed to setup tfboot components from a single primary account"
   assume_role_policy  = data.aws_iam_policy_document.assumerole.json
 
   inline_policy {
-    name   = format("%s%s%s%s", var.Prefix, "iap", var.Environment, "tfassumerole")
+    name   = format("%s-%s-%s", var.Prefix, var.Region, "tfassumerole")
     policy = data.aws_iam_policy_document.tfbootstrap.json
   }
   tags = {
-    Name  = format("%s%s%s%s", var.Prefix, "iar", var.Environment, "tfassumerole")
+    Name  = format("%s-%s-%s", var.Prefix, var.Region, "tfassumerole")
     rtype = "security"
   }
 }
