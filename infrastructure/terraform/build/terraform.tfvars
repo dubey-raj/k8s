@@ -1,1 +1,11 @@
-# This file is not used. Set variables in GitHub. Use bootstrap\pipelinebuild\githubresources.tf to create them!
+Region = "us-east-1"
+Application = "usermanager-api"
+ArtifactoryRepo = "dubeyraj/usermanager"
+AZ01 = "us-east-1a"
+AZ02 = "us-east-1b"
+EnvCode = "dev"
+EnvTag = "Development"
+GitHubRepo = "k8s"
+PublicIP = "0.0.0.0/0"
+VPCCIDR = "10.0"
+SolTag = "usermanager-api"

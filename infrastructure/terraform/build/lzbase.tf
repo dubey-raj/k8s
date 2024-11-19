@@ -2,7 +2,7 @@
 
 # Create a Resource Group to identify Terraform created resources
 resource "aws_resourcegroups_group" "Terraform" {
-  name        = format("%s%s%s%s", var.Prefix, "rgg", var.EnvCode, "demoall")
+  name        = format("%s%s%s%s", var.Application, "rgg", var.EnvCode, "demoall")
   description = "Terraform created demo environment resources"
 
   resource_query {
@@ -22,18 +22,18 @@ JSON
   }
 
   tags = {
-    Name  = format("%s%s%s%s", var.Prefix, "rgg", var.EnvCode, "demoall")
+    Name  = format("%s%s%s%s", var.Application, "rgg", var.EnvCode, "demoall")
     rtype = "scaffold"
   }
 }
 
 # Create Amazon S3 bucket for ALB logs
 resource "aws_s3_bucket" "alblogs" {
-  bucket_prefix = format("%s%s%s%s", var.Prefix, "sss", var.EnvCode, "alblogs")
+  bucket_prefix = format("%s%s%s%s", var.Application, "sss", var.EnvCode, "alblogs")
   force_destroy = true
 
   tags = {
-    Name      = format("%s%s%s%s", var.Prefix, "sss", var.EnvCode, "alblogs"),
+    Name      = format("%s%s%s%s", var.Application, "sss", var.EnvCode, "alblogs"),
     rtype     = "storage"
     codeblock = "lzbase"
   }

@@ -13,8 +13,8 @@ variable "AZ02" {
 }
 
 # Tagging and naming
-variable "Prefix" {
-  description = "Prefix used to name all resources"
+variable "Application" {
+  description = "Application used to name all resources"
   type        = string
 }
 variable "SolTag" {
@@ -40,16 +40,17 @@ variable "VPCCIDR" {
   type        = string
 }
 variable "PublicIP" {
-  description = "Limits mswebapp access to a specified public IP address"
+  description = "Limits application access to a specified public IP address"
   type        = string
+  default = "0.0.0.0/0"
 }
 
 # Web App Build
-variable "ECRRepo" {
-  description = "Name of Amazon ECR repository"
+variable "ArtifactoryRepo" {
+  description = "Name of Artifactory repository"
   type        = string
 }
 variable "ImageTag" {
-  description = "Amazon ECR Microsoft sample application Image Tag"
+  description = "Docker Image Tag"
   type        = string
 }

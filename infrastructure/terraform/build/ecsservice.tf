@@ -1,8 +1,8 @@
 ### Create Amazon ECS task definition and service
 
 # Create Amazon ECS task definition
-resource "aws_ecs_task_definition" "mswebapp" {
-  family                   = format("%s%s%s%s", var.Prefix, "ect", var.EnvCode, "mswebapp")
+resource "aws_ecs_task_definition" "ecs-task-definition" {
+  family                   = format("%s-%s", var.Application, var.EnvCode)
   requires_compatibilities = ["FARGATE"]
   cpu                      = 1024
   memory                   = 2048
@@ -11,8 +11,8 @@ resource "aws_ecs_task_definition" "mswebapp" {
 
   container_definitions = jsonencode([
     {
-      name                   = "mswebapp"
-      image                  = "dubeyraj/usermanagementservice:2"
+      name                   =  var.Application
+      image                  = format("%s:%s",var.ArtifactoryRepo, var.ImageTag)
       cpu                    = 256
       memory                 = 512
       essential              = true
@@ -26,9 +26,9 @@ resource "aws_ecs_task_definition" "mswebapp" {
       logconfiguration = {
         logDriver = "awslogs",
         options = {
-          awslogs-group         = "${aws_cloudwatch_log_group.mswebapp.name}",
+          awslogs-group         = "${aws_cloudwatch_log_group.app_logs.name}",
           awslogs-region        = "${var.Region}",
-          awslogs-stream-prefix = "awslogs-"
+          awslogs-stream-prefix = "ecs"
         }
       }
     }
@@ -36,10 +36,10 @@ resource "aws_ecs_task_definition" "mswebapp" {
 }
 
 # Create Amazon ECS task service
-resource "aws_ecs_service" "mswebapp" {
-  name            = format("%s%s%s%s", var.Region, "iar", var.EnvCode, "svcmswebapp")
-  cluster         = aws_ecs_cluster.mswebapp.id
-  task_definition = aws_ecs_task_definition.mswebapp.arn
+resource "aws_ecs_service" "ecs-service" {
+  name            = format("%s-%s", var.Application, var.EnvCode)
+  cluster         = aws_ecs_cluster.ecs_cluster.id
+  task_definition = aws_ecs_task_definition.ecs-task-definition.arn
   launch_type     = "FARGATE"
   desired_count   = 2
   propagate_tags  = "TASK_DEFINITION"
@@ -51,13 +51,13 @@ resource "aws_ecs_service" "mswebapp" {
   }
 
   load_balancer {
-    target_group_arn = aws_lb_target_group.mswebapp.arn
-    container_name   = "mswebapp"
+    target_group_arn = aws_lb_target_group.alb-target-group.arn
+    container_name   = var.Application
     container_port   = 8080
   }
 
   tags = {
-    Name  = format("%s%s%s%s", var.Region, "iar", var.EnvCode, "svcmswebapp")
+    Name  = format("%s-%s", var.Application, var.EnvCode)
     rtype = "ecsservice"
   }
 }
