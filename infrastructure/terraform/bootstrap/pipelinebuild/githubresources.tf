@@ -18,28 +18,27 @@ locals {
 ### Create GitHub Secrets
 # IAM Role ARN used by GitHub Actions runner to deploy AWS resources
 resource "github_actions_secret" "AWS_ROLE" {
-  repository      = var.GitHubRepo
+  for_each = var.GitHubRepos
+
+  repository      = each.value
   secret_name     = "AWS_ROLE"
   plaintext_value = lookup(local.gha_iam_role, "dev", null)
 }
 
 # Terraform state S3 bucket name
 resource "github_actions_secret" "TF_STATE_BUCKET_NAME" {
-  repository      = var.GitHubRepo
+  for_each = var.GitHubRepos
+
+  repository      = each.value
   secret_name     = "TF_STATE_BUCKET_NAME"
   plaintext_value = lookup(local.tfstate_bucket_name, "dev", null)
 }
 
-# Terraform state S3 bucket key
-resource "github_actions_secret" "TF_STATE_BUCKET_KEY" {
-  repository      = var.GitHubRepo
-  secret_name     = "TF_STATE_BUCKET_KEY"
-  plaintext_value = "terraform/dev.tfstate"
-}
-
 # Terraform state locking DynamoDB table
 resource "github_actions_secret" "TF_STATE_DYNAMODB_TABLE" {
-  repository      = var.GitHubRepo
+  for_each = var.GitHubRepos
+
+  repository      = each.value
   secret_name     = "TF_STATE_DYNAMODB_TABLE"
   plaintext_value = lookup(local.tfstate_dynamodb_table, "dev", null)
 }

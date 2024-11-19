@@ -2,10 +2,13 @@
 Region = "us-east-1"
 
 # Tagging and Naming
-Prefix = "tfboot"
+Prefix = "tf"
 
 # Assumed role ARNs
-dev_role_arn  = "arn:aws:iam::977099024175:role/tfbootiardvtfassumerole"
+dev_role_arn  = "arn:aws:iam::977099024175:role/tf-us-east-1-tfassumerole"
 
 # GitHub Settings
-GitHubRepo      = "k8s"
+GitHubRepos      = ["recommendation-service",
+                    "products-service",
+                    "k8s"
+                    ]

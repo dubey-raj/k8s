@@ -1,7 +1,7 @@
 # This file contains IAM permissions required to deploy and destroy the sample .NET Core application.
 # WARNING: Consider restricting to actions and resources required by GitHub to deploy your solution through the GitHub Actions pipeline
 data "aws_caller_identity" "current" {}
-data "aws_iam_policy_document" "SampleApp" {
+data "aws_iam_policy_document" "DeploymentRoleAccess" {
   statement {
     actions   = [
       "cloudformation:DescribeStacks",
