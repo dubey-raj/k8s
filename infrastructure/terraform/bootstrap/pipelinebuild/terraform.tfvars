@@ -5,7 +5,9 @@ Region = "us-east-1"
 Prefix = "tf"
 
 # Assumed role ARNs
-dev_role_arn  = "arn:aws:iam::977099024175:role/tfbootiardvtfassumerole"
+dev_role_arn  = "arn:aws:iam::977099024175:role/tf-us-east-1-tfassumerole"
 
 # GitHub Settings
-GitHubRepos      = ["k8s"]
+GitHubRepos      = ["recommendation-service",
+                    "products-service"
+                    ]

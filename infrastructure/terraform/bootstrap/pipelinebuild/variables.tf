@@ -18,5 +18,5 @@ variable "dev_role_arn" {
 
 variable "GitHubRepos" {
   description = "GitHub repository name"
-  type        = list(string)
+  type        = set(string)
 }

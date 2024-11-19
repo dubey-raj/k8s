@@ -12,5 +12,5 @@ variable "Prefix" {
 
 variable "GitHubRepos" {
   description = "GitHub repositories name"
-  type        = list(string)
+  type        = set(string)
 }
