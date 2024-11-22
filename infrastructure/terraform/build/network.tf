@@ -95,6 +95,7 @@ resource "aws_subnet" "pub_subnet_01" {
 
   tags = {
     Name         = format("%s-%s-%s-%s", "pub", "subnet-01", "vpc", var.Region)
+    subtype     = "public"
     resourcetype = "network"
     codeblock    = "network-3tier"
   }
@@ -107,6 +108,7 @@ resource "aws_subnet" "pub_subnet_02" {
 
   tags = {
     Name         = format("%s-%s-%s-%s", "pub", "subnet-02", "vpc", var.Region)
+    subtype     = "public"
     resourcetype = "network"
     codeblock    = "network-3tier"
   }
@@ -119,6 +121,7 @@ resource "aws_subnet" "priv_subnet_01" {
 
   tags = {
     Name         = format("%s-%s-%s-%s", "priv", "subnet-01", "vpc", var.Region)
+    subtype     = "private"
     resourcetype = "network"
     codeblock    = "network-3tier"
   }
@@ -131,6 +134,7 @@ resource "aws_subnet" "priv_subnet_02" {
 
   tags = {
     Name         = format("%s-%s-%s-%s", "priv", "subnet-02", "vpc", var.Region)
+    subtype     = "private"
     resourcetype = "network"
     codeblock    = "network-3tier"
   }
@@ -247,62 +251,4 @@ resource "aws_route_table_association" "pv_01" {
 resource "aws_route_table_association" "pv_02" {
   subnet_id      = aws_subnet.priv_subnet_02.id
   route_table_id = aws_route_table.priv_02.id
-}
-
-# Create Security Groups
-resource "aws_security_group" "web01" {
-  name        = format("%s-%s-%s", "scg", "web01", var.Region)
-  description = "Web Security Group"
-  vpc_id      = aws_vpc.vpc_01.id
-
-  ingress {
-    description = "Web Inbound"
-    from_port   = 80
-    to_port     = 80
-    protocol    = "tcp"
-    cidr_blocks = [var.PublicIP]
-  }
-
-  egress {
-    description = "Web Outbound"
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  tags = {
-    Name         = format("%s-%s-%s", "scg", "web01", var.Region)
-    resourcetype = "security"
-    codeblock    = "network-3tier"
-  }
-}
-
-resource "aws_security_group" "app01" {
-  name        = format("%s-%s-%s", "scg", "app01", var.Region)
-  description = " Application Security Group"
-  vpc_id      = aws_vpc.vpc_01.id
-
-  ingress {
-    description     = "Application Inbound"
-    from_port       = 0
-    to_port         = 0
-    protocol        = "-1"
-    security_groups = [aws_security_group.web01.id]
-    self            = true
-  }
-
-  egress {
-    description = "Application Outbound"
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  tags = {
-    Name         = format("%s-%s-%s", "scg", "app01", var.Region)
-    resourcetype = "security"
-    codeblock    = "network-3tier"
-  }
 }
