@@ -1,6 +1,0 @@
-Region = "us-east-1"
-AZ01 = "us-east-1a"
-AZ02 = "us-east-1b"
-PublicIP = "0.0.0.0/0"
-VPCCIDR = "10.0"
-SolTag = "common-setup"
